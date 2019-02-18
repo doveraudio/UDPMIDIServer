@@ -40,9 +40,7 @@ namespace UDPMIDISimpleClient
             
 
             var client = UdpUser.ConnectTo("127.0.0.1", 32123);
-            getMidiInputDevices();
             addInputDevices();
-            getMidiOutputDevices();
             addOutputDevices();
             InputDevice indevice = new InputDevice(0);
             indevice.MessageReceived += Indevice_MessageReceived;
@@ -53,6 +51,7 @@ namespace UDPMIDISimpleClient
             indevice.SysRealtimeMessageReceived += Indevice_SysRealtimeMessageReceived;
             indevice.Error += Indevice_Error;
             indevice.StartRecording();
+            
             Task.Factory.StartNew(async () =>
             {
                 while (run)
@@ -134,6 +133,7 @@ namespace UDPMIDISimpleClient
             
             Console.WriteLine("Activate/Deactivate Midi Input Devices:");
             getMidiInputDevices();
+            Console.WriteLine("Enter Index of device to activate or deactivate");
             Console.Write("?>");
             do
             {
@@ -145,6 +145,27 @@ namespace UDPMIDISimpleClient
         private static void addInputDevice(InputDevice device)
         {
 
+        }
+
+        private static void AttachEvents(InputDevice device)
+        {
+            device.MessageReceived += Indevice_MessageReceived;
+            device.ShortMessageReceived += Indevice_ShortMessageReceived;
+            device.ChannelMessageReceived += Indevice_ChannelMessageReceived;
+            device.SysCommonMessageReceived += Indevice_SysCommonMessageReceived;
+            device.SysExMessageReceived += Indevice_SysExMessageReceived;
+            device.SysRealtimeMessageReceived += Indevice_SysRealtimeMessageReceived;
+            device.Error += Indevice_Error;
+        }
+        private static void DetachEvents(InputDevice device)
+        {
+            device.MessageReceived -= Indevice_MessageReceived;
+            device.ShortMessageReceived -= Indevice_ShortMessageReceived;
+            device.ChannelMessageReceived -= Indevice_ChannelMessageReceived;
+            device.SysCommonMessageReceived -= Indevice_SysCommonMessageReceived;
+            device.SysExMessageReceived -= Indevice_SysExMessageReceived;
+            device.SysRealtimeMessageReceived -= Indevice_SysRealtimeMessageReceived;
+            device.Error -= Indevice_Error;
         }
         private static void getServerPort()
         {
@@ -235,6 +256,7 @@ namespace UDPMIDISimpleClient
                 if (read.ToLower().Equals("q")) {
 
                     complete = true;
+                    break;
                 }
                     if (read == "")
                     {
@@ -257,6 +279,7 @@ namespace UDPMIDISimpleClient
                 {
 
                     complete = true;
+                    break;
                 }
 
                 if (read == "")
@@ -281,10 +304,12 @@ namespace UDPMIDISimpleClient
                 {
 
                     complete = true;
+                    break;
                 }
                 if (read.ToLower().Contains("no"))
                 {
                     complete = true;
+                    break;
                 }
 
             } while (!complete);
@@ -306,6 +331,7 @@ namespace UDPMIDISimpleClient
                 {
 
                     complete = true;
+                    break;
                 }
                 if (read == "")
                 {
@@ -328,6 +354,7 @@ namespace UDPMIDISimpleClient
                 {
 
                     complete = true;
+                    break;
                 }
 
                 if (read == "")
@@ -342,6 +369,7 @@ namespace UDPMIDISimpleClient
                 {
 
                     complete = true;
+                    break;
                 }
                 if (read == "yes")
                 {
@@ -474,6 +502,23 @@ namespace UDPMIDISimpleClient
 
             return JsonConvert.SerializeObject(this);
         }
+    }
+
+    public class UDPMidiInputDevice {
+
+        public UDPMidiInputDevice() {
+
+            
+
+        }
+
+        bool active;
+        MidiInCaps caps;
+        InputDevice device;
+        public MidiInCaps Caps { get => caps; set => caps = value; }
+        public bool Active { get => active; set => active = value; }
+
+
     }
 
     enum EntryMode
