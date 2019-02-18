@@ -26,7 +26,7 @@ namespace UDPMIDISimpleClient
         static string ListenServerPort;
         static bool BroadcastActive;
         static bool ListenActive;
-        static List<InputDevice> inputDevices;
+        static List<UDPMidiInputDevice> inputDevices;
         static List<OutputDevice> outputDevices;
         static string read;
         static bool run = true;
@@ -111,7 +111,7 @@ namespace UDPMIDISimpleClient
 
         private static void initializeCollections()
         {
-            inputDevices = new List<InputDevice>();
+            inputDevices = new List<UDPMidiInputDevice>();
             outputDevices = new List<OutputDevice>();
             BroadcastClients = new List<UdpUser>();
             ListenClients = new List<UdpUser>();
@@ -142,8 +142,9 @@ namespace UDPMIDISimpleClient
 
             } while (!complete);
         }
-        private static void addInputDevice(InputDevice device)
+        private static void addInputDevice(int index)
         {
+            inputDevices.Add(new UDPMidiInputDevice(index));
 
         }
 
@@ -382,9 +383,8 @@ namespace UDPMIDISimpleClient
             } while (!complete);
 
         }
-        private static List<InputDevice> getMidiInputDevices()
+        private static void getMidiInputDevices()
         {
-            inputDevices = new List<InputDevice>();
             bool exists = true;
             int index = 0;
             int count = InputDevice.DeviceCount;
@@ -393,11 +393,12 @@ namespace UDPMIDISimpleClient
             for (int i = 0; i < count; i++) {
                 var caps = InputDevice.GetDeviceCapabilities(i);
                 Console.WriteLine("{0}: {1}", i, caps.name);
+                addInputDevice(i);
 
             }
 
 
-            return inputDevices;
+            
 
 
         }
@@ -485,70 +486,4 @@ namespace UDPMIDISimpleClient
           //  client.Send(e.Message.MessageType.ToString());
         }
     }
-    public class UDPMIDIMessage
-    {
-        public UDPMIDIMessage(string mode, string value)
-        {
-            this.Value = value;
-            this.Mode = mode;
-        }
-        private string mode;
-        private string value;
-
-        public string Mode { get => mode; set => mode = value; }
-        public string Value { get => value; set => this.value = value; }
-
-        public string ToJson() {
-
-            return JsonConvert.SerializeObject(this);
-        }
-    }
-
-    public class UDPMidiInputDevice {
-
-        public UDPMidiInputDevice()
-        {
-
-            try
-            {
-                this.Initialize(0);
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-        }
-
-        private void Initialize(int i)
-        {
-            active = false;
-            index = i;
-            caps = InputDevice.GetDeviceCapabilities(index);
-
-            device = new InputDevice(index);
-
-
-
-        }
-
-        public UDPMidiInputDevice(int DeviceIndex) {
-            Initialize(DeviceIndex);
-        }
-
-        bool active;
-        int index;
-        MidiInCaps caps;
-        InputDevice device;
-        public MidiInCaps Caps { get => caps; set => caps = value; }
-        public bool Active { get => active; set => active = value; }
-        public InputDevice Device { get => device; set => device = value; }
-        public int Index { get => index; set => index = value; }
-    }
-
-    enum EntryMode
-    {
-            Add,Remove,Clear
-        };
 }

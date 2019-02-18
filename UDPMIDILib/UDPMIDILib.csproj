@@ -34,6 +34,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Sanford.Multimedia.Midi, Version=6.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sanford.Multimedia.Midi.6.6.0\lib\net20\Sanford.Multimedia.Midi.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,10 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntryMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Received.cs" />
     <Compile Include="UdpBase.cs" />
     <Compile Include="UdpListener.cs" />
+    <Compile Include="UDPMidiInputDevice.cs" />
+    <Compile Include="UDPMIDIMessage.cs" />
+    <Compile Include="UDPMidiOutputDevice.cs" />
     <Compile Include="UdpUser.cs" />
   </ItemGroup>
   <ItemGroup>
