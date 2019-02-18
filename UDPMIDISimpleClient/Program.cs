@@ -29,6 +29,7 @@ namespace UDPMIDISimpleClient
         static List<UDPMidiInputDevice> inputDevices;
         static List<UDPMidiOutputDevice> outputDevices;
         static string read;
+        static string remote;
         static bool run = true;
         static void Main(string[] args)
         {
@@ -55,8 +56,10 @@ namespace UDPMIDISimpleClient
             Console.WriteLine("Type 'quit' to quit.");
             do
             {
+                
                 //read = Console.ReadLine();
                 if (read == "quit") { Console.WriteLine(read + "ting!"); run = false; }
+                
                 //client.Send(read);
 
             } while (read != "quit");
@@ -643,7 +646,7 @@ namespace UDPMIDISimpleClient
 
             string encoded = JsonConvert.SerializeObject(e, Formatting.Indented);
             UDPMIDIMessage m = new UDPMIDIMessage(mode, encoded);
-            LogOutMessage(encoded);
+            //LogOutMessage(encoded);
             foreach (UdpUser client in BroadcastClients)
             {
                 client.Send(m.ToJson());
@@ -669,7 +672,7 @@ namespace UDPMIDISimpleClient
         {
             string encoded = JsonConvert.SerializeObject(message, Formatting.Indented);
             UDPMIDIMessage m = new UDPMIDIMessage("message", encoded);
-            Console.WriteLine(m.ToJson());
+            //Console.WriteLine(m.ToJson());
             foreach (UdpUser client in BroadcastClients)
             {
                 client.Send(m.ToJson());

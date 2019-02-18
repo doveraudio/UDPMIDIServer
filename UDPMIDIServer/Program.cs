@@ -13,6 +13,8 @@ namespace UDPMIDIServer
 {
     class Program
     {
+
+        private List<UdpUser> subscribers;
       
         static void Main(string[] args)
         {
@@ -23,7 +25,7 @@ namespace UDPMIDIServer
             Task.Factory.StartNew(async () => {
                 while (true) {
                     var received = await server.Receive();
-                    //server.Reply("copy" + received.Message, received.Sender);
+                    server.Reply("copy" + received.Message, received.Sender);
                     //Console.WriteLine("Received: " + received.Message + " from " + received.Sender);
 
                     read = received.Message;
@@ -58,6 +60,14 @@ namespace UDPMIDIServer
                 
 
             } while (read != "quit");
+
+
+        }
+        private static void AddSubscriber(string host, int port) {
+            UdpUser subscriber = UdpUser.ConnectTo(host, port);
+            subscriber.Active = true;
+            subscriber.Connect();
+            subscriber.Send("connected to server");
 
 
         }
