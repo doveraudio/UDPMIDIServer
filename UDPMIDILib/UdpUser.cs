@@ -57,7 +57,7 @@ namespace UDPMIDILib
 
         public void Connect() {
 
-           this.Client = ConnectTo(this.hostname, this.port).Client;
+            this.Client = ConnectTo(this.hostname, this.port).Client;
         }
 
         public void Close() {

@@ -25,9 +25,12 @@ namespace UDPMIDILib
             active = false;
             index = i;
             caps = OutputDevice.GetDeviceCapabilities(index);
-
-            device = new OutputDevice(index);
-
+            try
+            {
+                device = new OutputDevice(index);
+            }
+            catch (Exception ex) {
+            }
 
 
         }
