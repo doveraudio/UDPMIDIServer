@@ -75,6 +75,7 @@ namespace UDPMIDISimpleClient
                     try
                     {
                         Received received = await client.Receive();
+                        
                         Console.WriteLine(received.Message);
                         if (received.Message.Contains("quit") | read.Contains("quit"))
                             break;
@@ -523,6 +524,9 @@ namespace UDPMIDISimpleClient
                     listen.Port = port;
                     listen.Active = false;
                     listen.Index = ListenClients.Count;
+                    UDPMIDIMessage m = new UDPMIDIMessage("subscribe", JsonConvert.SerializeObject(listen, typeof(UdpUser), null));
+                    listen.Connect();
+                    listen.Send(m.ToJson());
                     ListenClients.Add(listen);
                     read = "";
 
