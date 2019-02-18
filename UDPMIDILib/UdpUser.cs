@@ -12,14 +12,48 @@ namespace UDPMIDILib
         private UdpUser()
         {
         }
-
+        private int index;
         private string hostname;
         private int port;
-
+        private bool active;
         public string Hostname { get => hostname; set => hostname = value; }
         public string IpAddress { get => hostname; set => hostname = value; }
 
         public int Port { get => port; set => port = value; }
+        public bool Active
+        {
+            get
+            {
+                return active;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    active = true;
+
+
+                }
+                else {
+
+                    active = false;
+                    try
+                    {
+                        this.Close();
+                    }
+                    catch (System.Exception)
+                    {
+
+                        
+                    }
+                    
+                }
+                
+            }
+        }
+
+        public int Index { get => index; set => index = value; }
 
         public void Connect() {
 

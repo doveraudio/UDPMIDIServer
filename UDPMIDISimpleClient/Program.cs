@@ -197,6 +197,8 @@ namespace UDPMIDISimpleClient
 
         }
 
+
+
         private static void ClearBroadCastServerAddresses()
         {
             throw new NotImplementedException();
@@ -227,7 +229,7 @@ namespace UDPMIDISimpleClient
                     }
                 }
 
-                Console.WriteLine("Add more Broadcast Addresses?");
+                Console.WriteLine("Remove more Broadcast Addresses?");
                 Console.Write("?>");
                 read = Console.ReadLine();
                 if (read.ToLower().Contains("no"))
@@ -241,7 +243,7 @@ namespace UDPMIDISimpleClient
         private static void AddBroadCastServerAddresses()
         {
             string ip = "";
-            string port = "";
+            int port = 32123;
             int index;
             bool complete = false;
             do
@@ -265,7 +267,7 @@ namespace UDPMIDISimpleClient
                     }
                     else try
                         {
-                            read = IPAddress.Parse(read).ToString();
+                            ip = IPAddress.Parse(read).ToString();
                         }
                         catch (Exception ex)
                         {
@@ -285,16 +287,19 @@ namespace UDPMIDISimpleClient
 
                 if (read == "")
                 {
-                    port = "32123";
+                    port = 32123;
                 }
-                else { port = read; }
+                else {
+                    int.TryParse(read, out port);
+                }
                 Console.WriteLine("IP Address: {0}, Port: {1}\nOkay?\n<yes|no>", ip, port);
                 Console.Write("?>");
                 read = Console.ReadLine();
                 if (read.ToLower().Contains("yes"))
                 {
-                    BroadcastServerIp = ip;
-                    BroadcastServerPort = port;
+
+
+                    BroadcastClients.Add(UdpUser.ConnectTo(ip, port));
                     read = "";
 
                 }
@@ -320,8 +325,15 @@ namespace UDPMIDISimpleClient
         {
             //throw new NotImplementedException();
             string ip = "";
-            string port = "";
+            int port = 32123;
             bool complete = false;
+
+            for (int i = 0; i < ListenClients.Count; i++)
+            {
+                Console.WriteLine("{0}:{1}", i, ListenClients[i].Hostname + ":" + ListenClients[i].Port.ToString());
+
+            }
+
             do
             {
 
@@ -360,9 +372,9 @@ namespace UDPMIDISimpleClient
 
                 if (read == "")
                 {
-                    port = "32123";
+                    port = 32123;
                 }
-                else { port = read; }
+                else { int.TryParse(read, out port); }
                 Console.WriteLine("IP Address: {0}, Port: {1}\nOkay?\n<yes|no|quit>", ip, port);
                 Console.Write("?>");
                 read = Console.ReadLine();
@@ -374,8 +386,12 @@ namespace UDPMIDISimpleClient
                 }
                 if (read == "yes")
                 {
-                    ListenServerIp = ip;
-                    ListenServerPort = port;
+                    UdpUser listen = UdpUser.ConnectTo(ip, port);
+                    listen.Hostname = ip;
+                    listen.Port = port;
+                    listen.Active = false;
+                    listen.Index = ListenClients.Count;
+                    ListenClients.Add(listen);
                     read = "";
                     complete = true;
                 }
@@ -383,6 +399,45 @@ namespace UDPMIDISimpleClient
             } while (!complete);
 
         }
+
+        private static void RemoveListenServerAddresses()
+        {
+            string ip = "";
+            string port = "";
+            int index;
+            bool complete = false;
+            do
+            {
+                for (int i = 0; i < ListenClients.Count; i++)
+                {
+                    Console.WriteLine("{0}:{1}", i, ListenClients[i].Hostname + ":" + ListenClients[i].Port.ToString());
+
+                }
+                Console.WriteLine("Enter Listen Server IP Address index to remove:\n (q to quit) \n");
+                Console.Write("?>");
+                read = Console.ReadLine();
+                if (!read.ToLower().Equals("q"))
+                {
+                    if (int.TryParse(read, out index))
+                    {
+                        if (ListenClients.Count >= index)
+                        {
+                            ListenClients.RemoveAt(index);
+                        }
+                    }
+                }
+
+                Console.WriteLine("Remove more Listen Addresses?");
+                Console.Write("?>");
+                read = Console.ReadLine();
+                if (read.ToLower().Contains("no"))
+                {
+                    complete = true;
+                }
+
+            } while (!complete);
+        }
+
         private static void getMidiInputDevices()
         {
             bool exists = true;
