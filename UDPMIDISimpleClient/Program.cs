@@ -35,7 +35,7 @@ namespace UDPMIDISimpleClient
             initializeCollections();
             initializeConnections();
             getListenServerAddress();
-            getBroadcastServerAddress();
+            getBroadcastServerAddress(0);
             
             
 
@@ -114,6 +114,8 @@ namespace UDPMIDISimpleClient
         {
             inputDevices = new List<InputDevice>();
             outputDevices = new List<OutputDevice>();
+            BroadcastClients = new List<UdpUser>();
+            ListenClients = new List<UdpUser>();
 
         }
 
@@ -131,7 +133,7 @@ namespace UDPMIDISimpleClient
             bool complete = false;
             
             Console.WriteLine("Activate/Deactivate Midi Input Devices:");
-            Console.WriteLine("");
+            Console.WriteLine("?>");
             do
             {
 
@@ -148,12 +150,11 @@ namespace UDPMIDISimpleClient
             //throw new NotImplementedException();
         }
 
-        private static void getBroadcastServerAddress()
+        private static void getBroadcastServerAddress(EntryMode mode = 0)
         {
             //throw new NotImplementedException();
             string ip="";
             string port="";
-            EntryMode mode = 0;
             bool complete = false;
             switch (mode)
             {
@@ -169,51 +170,7 @@ namespace UDPMIDISimpleClient
                 default:
                     break;
             }
-            do
-            {
-
-                Console.WriteLine("Enter Broadcast Server IP Address:\n (defaults to [127.0.0.1], q to quit) \n");
-                Console.Write("?>");
-                read = Console.ReadLine();
-                if (read == "")
-                {
-                    ip = "127.0.0.1";
-                }
-                else try
-                    {
-                        read = IPAddress.Parse(read).ToString();
-                    }
-                    catch (Exception ex) {
-
-                        ip = "127.0.0.1";
-                    }
-                   
-                Console.WriteLine("Enter Broadcast Server Port:\n (defaults to [32123]) \n");
-                Console.Write("?>");
-                read = Console.ReadLine();
-
-                if (read == "")
-                {
-                    port = "32123";
-                }
-                else { port = read; }
-                Console.WriteLine("IP Address: {0}, Port: {1}\nOkay?\n<yes|no>", ip, port);
-                Console.Write("?>");
-                read =  Console.ReadLine();
-                if (read.ToLower().Contains("yes")) {
-                    BroadcastServerIp = ip;
-                    BroadcastServerPort = port;
-                    read = "";
-                    
-                }
-                Console.WriteLine("Add more Broadcast Addresses?");
-                Console.Write("?>");
-                read = Console.ReadLine();
-                if (read.ToLower().Contains("no")) {
-                    complete = true;
-                }
-
-            } while (!complete);
+           
 
         }
 
@@ -373,7 +330,7 @@ namespace UDPMIDISimpleClient
             Console.WriteLine("Found {0} input devices", count);
             for (int i = 0; i < count; i++) {
                 var caps = InputDevice.GetDeviceCapabilities(i);
-                Console.WriteLine(JsonConvert.SerializeObject(caps));
+                Console.WriteLine("{0}: {1}", i, caps.name);
 
             }
 
