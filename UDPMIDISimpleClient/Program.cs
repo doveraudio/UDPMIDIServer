@@ -61,7 +61,7 @@ namespace UDPMIDISimpleClient
                     {
                         var received = await client.Receive();
                         Console.WriteLine(received.Message);
-                        if (received.Message.Contains("quit") | read.Contains("quit")) ;
+                        if (received.Message.Contains("quit") | read.Contains("quit")) 
                             break;
                     }
                     catch (Exception Ex)
@@ -133,7 +133,8 @@ namespace UDPMIDISimpleClient
             bool complete = false;
             
             Console.WriteLine("Activate/Deactivate Midi Input Devices:");
-            Console.WriteLine("?>");
+            getMidiInputDevices();
+            Console.Write("?>");
             do
             {
 
@@ -223,27 +224,40 @@ namespace UDPMIDISimpleClient
             bool complete = false;
             do
             {
+                for (int i = 0; i < BroadcastClients.Count; i++)
+                {
+                    Console.WriteLine("{0}:{1}", i, BroadcastClients[i].Hostname + ":" + BroadcastClients[i].Port.ToString());
 
+                }
                 Console.WriteLine("Enter Broadcast Server IP Address:\n (defaults to [127.0.0.1], q to quit) \n");
                 Console.Write("?>");
                 read = Console.ReadLine();
-                if (read == "")
-                {
-                    ip = "127.0.0.1";
-                }
-                else try
-                    {
-                        read = IPAddress.Parse(read).ToString();
-                    }
-                    catch (Exception ex)
-                    {
+                if (read.ToLower().Equals("q")) {
 
+                    complete = true;
+                }
+                    if (read == "")
+                    {
                         ip = "127.0.0.1";
                     }
+                    else try
+                        {
+                            read = IPAddress.Parse(read).ToString();
+                        }
+                        catch (Exception ex)
+                        {
 
-                Console.WriteLine("Enter Broadcast Server Port:\n (defaults to [32123]) \n");
+                            ip = "127.0.0.1";
+                        }
+                
+                Console.WriteLine("Enter Broadcast Server Port:\n (defaults to [32123]), q to quit) \n");
                 Console.Write("?>");
                 read = Console.ReadLine();
+                if (read.ToLower().Equals("q"))
+                {
+
+                    complete = true;
+                }
 
                 if (read == "")
                 {
@@ -263,6 +277,11 @@ namespace UDPMIDISimpleClient
                 Console.WriteLine("Add more Broadcast Addresses?");
                 Console.Write("?>");
                 read = Console.ReadLine();
+                if (read.ToLower().Equals("q"))
+                {
+
+                    complete = true;
+                }
                 if (read.ToLower().Contains("no"))
                 {
                     complete = true;
@@ -280,9 +299,14 @@ namespace UDPMIDISimpleClient
             do
             {
 
-                Console.WriteLine("Enter Listen Server IP Address:\n (defaults to [127.0.0.1]) \n");
+                Console.WriteLine("Enter Listen Server IP Address:\n (defaults to [127.0.0.1], q to quit) \n");
                 Console.Write("?>");
                 read = Console.ReadLine();
+                if (read.ToLower().Equals("q"))
+                {
+
+                    complete = true;
+                }
                 if (read == "")
                 {
                     ip = "127.0.0.1";
@@ -297,18 +321,28 @@ namespace UDPMIDISimpleClient
                         ip = "127.0.0.1";
                     }
 
-                Console.WriteLine("Enter Listen Server Port:\n (defaults to [32123]) \n");
+                Console.WriteLine("Enter Listen Server Port:\n (defaults to [32123], q to quit) \n");
                 Console.Write("?>");
                 read = Console.ReadLine();
+                if (read.ToLower().Equals("q"))
+                {
+
+                    complete = true;
+                }
 
                 if (read == "")
                 {
                     port = "32123";
                 }
                 else { port = read; }
-                Console.WriteLine("IP Address: {0}, Port: {1}\nOkay?\n<yes|no>", ip, port);
+                Console.WriteLine("IP Address: {0}, Port: {1}\nOkay?\n<yes|no|quit>", ip, port);
                 Console.Write("?>");
                 read = Console.ReadLine();
+                if (read.ToLower().Contains("q"))
+                {
+
+                    complete = true;
+                }
                 if (read == "yes")
                 {
                     ListenServerIp = ip;
