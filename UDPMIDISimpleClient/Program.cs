@@ -36,8 +36,10 @@ namespace UDPMIDISimpleClient
             getListenServerAddresses(0);
             getBroadcastServerAddresses(0);
 
-
-
+            //var device = new InputDevice(0);
+            //device.MessageReceived += Indevice_MessageReceived;
+            //device.ShortMessageReceived += Indevice_ShortMessageReceived;
+            //device.StartRecording();
             addInputDevices();
             addOutputDevices();
             initializeConnections();
@@ -53,7 +55,7 @@ namespace UDPMIDISimpleClient
             Console.WriteLine("Type 'quit' to quit.");
             do
             {
-                read = Console.ReadLine();
+                //read = Console.ReadLine();
                 if (read == "quit") { Console.WriteLine(read + "ting!"); run = false; }
                 //client.Send(read);
 
@@ -84,10 +86,22 @@ namespace UDPMIDISimpleClient
 
         private static void startRecording()
         {
-            foreach (UdpUser client in BroadcastClients) {
+            foreach (UDPMidiInputDevice device in inputDevices)
+            {
+                if (device.Active) {
+                    device.Device.StartRecording();
+                }
+            }
+        }
 
-               // client.Connect();
-
+        private static void stopRecording()
+        {
+            foreach (UDPMidiInputDevice device in inputDevices)
+            {
+                if (device.Active)
+                {
+                    device.Device.StopRecording();
+                }
             }
         }
 
@@ -629,6 +643,7 @@ namespace UDPMIDISimpleClient
 
             string encoded = JsonConvert.SerializeObject(e, Formatting.Indented);
             UDPMIDIMessage m = new UDPMIDIMessage(mode, encoded);
+            LogOutMessage(encoded);
             foreach (UdpUser client in BroadcastClients)
             {
                 client.Send(m.ToJson());
@@ -654,6 +669,7 @@ namespace UDPMIDISimpleClient
         {
             string encoded = JsonConvert.SerializeObject(message, Formatting.Indented);
             UDPMIDIMessage m = new UDPMIDIMessage("message", encoded);
+            Console.WriteLine(m.ToJson());
             foreach (UdpUser client in BroadcastClients)
             {
                 client.Send(m.ToJson());

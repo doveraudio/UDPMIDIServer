@@ -82,7 +82,7 @@ namespace UDPMIDILib
         public void Send(string message)
         {
             var datagram = Encoding.ASCII.GetBytes(message);
-            Client.Send(datagram, datagram.Length);
+            this.Client.Send(datagram, datagram.Length);
         }
     }
 }
