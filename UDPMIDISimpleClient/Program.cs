@@ -47,8 +47,9 @@ namespace UDPMIDISimpleClient
 
 
             startRecording();
-            foreach (UdpUser client in ListenClients) {
-            startListening(client);
+            foreach (UdpUser client in ListenClients)
+            {
+                startListening(client);
 
             }
 
@@ -56,10 +57,10 @@ namespace UDPMIDISimpleClient
             Console.WriteLine("Type 'quit' to quit.");
             do
             {
-                
+
                 //read = Console.ReadLine();
                 if (read == "quit") { Console.WriteLine(read + "ting!"); run = false; }
-                
+
                 //client.Send(read);
 
             } while (read != "quit");
@@ -75,7 +76,7 @@ namespace UDPMIDISimpleClient
                     try
                     {
                         Received received = await client.Receive();
-                        
+
                         Console.WriteLine(received.Message);
                         if (received.Message.Contains("quit") | read.Contains("quit"))
                             break;
@@ -92,7 +93,8 @@ namespace UDPMIDISimpleClient
         {
             foreach (UDPMidiInputDevice device in inputDevices)
             {
-                if (device.Active) {
+                if (device.Active)
+                {
                     device.Device.StartRecording();
                 }
             }
@@ -198,10 +200,12 @@ namespace UDPMIDISimpleClient
                 Console.WriteLine("Enter Index of device to activate or deactivate");
                 Console.Write("?>");
                 string read = Console.ReadLine();
-                int.TryParse(read,out index);
-                if (index >= 0 && index < InputDevice.DeviceCount) {
+                int.TryParse(read, out index);
+                if (index >= 0 && index < InputDevice.DeviceCount)
+                {
 
-                    if (inputDevices[index].Active) {
+                    if (inputDevices[index].Active)
+                    {
                         inputDevices[index].Active = false;
                         DetachEvents(inputDevices[index].Device);
 
@@ -315,7 +319,8 @@ namespace UDPMIDISimpleClient
 
         private static void ClearBroadCastServerAddresses()
         {
-            foreach (UdpUser client in BroadcastClients) {
+            foreach (UdpUser client in BroadcastClients)
+            {
 
                 client.Close();
                 client.Dispose();
@@ -461,7 +466,7 @@ namespace UDPMIDISimpleClient
 
             do
             {
-                
+
                 Console.WriteLine("{0} Listen Servers Found:\n", ListenClients.Count);
 
                 for (int i = 0; i < ListenClients.Count; i++)
@@ -602,9 +607,9 @@ namespace UDPMIDISimpleClient
                 {
                     addInputDevice(i);
                 }
-                
+
                 Console.WriteLine("{0}: {1}, Active: {2}", inputDevices[i].Index, inputDevices[i].Caps.name, inputDevices[i].Active.ToString());
-                
+
 
             }
 
@@ -615,7 +620,7 @@ namespace UDPMIDISimpleClient
         }
         private static void getMidiOutputDevices()
         {
-            
+
             bool exists = true;
             int index = 0;
             int count = OutputDevice.DeviceCount;
@@ -634,7 +639,7 @@ namespace UDPMIDISimpleClient
             }
 
 
-           
+
 
 
         }
@@ -707,5 +712,12 @@ namespace UDPMIDISimpleClient
             SendEncoded(e.Message, "channel");
             //  client.Send(e.Message.MessageType.ToString());
         }
+    }
+
+    public enum ServerMode
+    {
+
+        connect, disconnect, message, channel, shortmessage, sysrealtime, sysex, syscommon
+
     }
 }

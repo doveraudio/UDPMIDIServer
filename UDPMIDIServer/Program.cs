@@ -14,22 +14,45 @@ namespace UDPMIDIServer
     class Program
     {
 
-        private List<UdpUser> subscribers;
+        private static List<UdpUser> subscribers;
       
         static void Main(string[] args)
         {
             var server = new UdpListener();
-
+            subscribers = new List<UdpUser>();
+           IPEndPoint sender;
             string read = "";
 
             Task.Factory.StartNew(async () => {
                 while (true) {
                     var received = await server.Receive();
                     server.Reply("copy" + received.Message, received.Sender);
-                    //Console.WriteLine("Received: " + received.Message + " from " + received.Sender);
-
+                    Console.WriteLine("Received: " + received.Message + " from " + received.Sender);
                     read = received.Message;
-                    
+                    sender = received.Sender;
+                    UDPMIDIMessage m = (UDPMIDIMessage)JsonConvert.DeserializeObject(read, typeof(UDPMIDIMessage));
+                    switch (m.Mode)
+                    {
+                        case "connect":
+                            AddSubscriber(sender.Address.ToString(), sender.Port);
+                        break;
+                        case "disconnect":
+                            break;
+                        case "message":
+                            break;
+                        case "channel":
+                            break;
+                        case "short":
+                            break;
+                        case "systrealtime":
+                            break;
+                        case "sysex":
+                            break;
+                        case "syscommon":
+                            break;
+                        default:
+                            break;
+                    }
                     if (read == "quit")
                     { break; }
                     else {
@@ -68,7 +91,7 @@ namespace UDPMIDIServer
             subscriber.Active = true;
             subscriber.Connect();
             subscriber.Send("connected to server");
-
+            subscribers.Add(subscriber);
 
         }
         
@@ -85,5 +108,10 @@ namespace UDPMIDIServer
         public string Mode { get => mode; set => mode = value; }
         public string Value { get => value; set => this.value = value; }
     }
+    public enum ServerMode
+    {
 
+        connect, disconnect, message, channel, shortmessage, sysrealtime, sysex, syscommon
+
+    }
 }
